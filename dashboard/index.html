@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Token Radar: what a pre-token protocol's launch would be worth, and how to farm it</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<a class="skip" href="#board">Skip to the board</a>
+
+<header class="top">
+  <div class="brand">
+    <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
+      <circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-opacity=".35" stroke-width="1.5"/>
+      <circle cx="16" cy="16" r="7" fill="none" stroke="currentColor" stroke-opacity=".35" stroke-width="1.5"/>
+      <path d="M16 16 L27 9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="21.5" cy="12.5" r="2.4" fill="currentColor"/>
+    </svg>
+    <div>
+      <h1>Token Radar</h1>
+      <p class="sub" id="sub">pre-token protocols, ranked by what a launch would be worth</p>
+    </div>
+  </div>
+  <dl class="facts" id="facts"></dl>
+</header>
+
+<section class="model" id="model" aria-labelledby="modelh">
+  <h2 id="modelh">The number, and how it is made</h2>
+  <div class="modelgrid">
+    <div class="formula" id="formula"></div>
+    <div class="evidence" id="evidence"></div>
+  </div>
+</section>
+
+<nav class="tabs" id="tabs" aria-label="views"></nav>
+
+<section class="controls" id="controls"></section>
+
+<main id="board" tabindex="-1">
+  <div id="view" class="view"></div>
+</main>
+
+<footer class="foot" id="foot"></footer>
+
+<script src="../data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
