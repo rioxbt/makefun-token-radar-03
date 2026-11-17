@@ -56,7 +56,10 @@ floor that the watchlist itself leaves out, and 138 below it — with:
   and listing day, and from the protocol's category;
 - what one wallet of $5,000 held 60 days actually earns after gas, which is a different ranking from the
   implied value: the board's rank 1 is worth $19 to that wallet, while the best farm on the board
-  (MetalX Swap) is worth $330. Both orderings are one click apart on the page.
+  (MetalX Swap) is worth $330. Both orderings are one click apart on the page;
+- a **beyond the floor** marker with its own filter on the 20 rows above the house's own floor that its
+  watchlist leaves out (Sentora Curator, BitFi Basis, Polymarket International, OnRe, Resolv …): the list is
+  a floor under the board and never a ceiling over it.
 
 The dashboard is a static page with no framework and no network: the board (sortable and filterable by
 search, category, chain and watchlist), a protocol's own view, the screened records, the 144 token-bearing
@@ -81,7 +84,7 @@ write the same bytes. To re-render the screenshots from the page's own files, ru
 | --- | --- |
 | `main.ts` | the entry: reads the snapshot, writes the board, the page's data, the dashboard and the dossier |
 | `lib/model.ts` | the screen, the fit, the cross-validation, the farm model and the farm plans |
-| `dashboard/` | `index.html`, `app.css`, `app.js`: the page, 49 KB of source, no dependency and no network |
+|  `dashboard/` | `index.html`, `app.css`, `app.js`: x, no dependency and no network |
 | `screenshots/` | the three views the judge is shown: the board, a protocol's own view, the filtered board |
 | `vendor/makefun-board.ts` | the kit's dossier library, byte for byte, as the rules ask |
 | `tools/verify-gate.ts` | a local stand-in for the sealed seven-row gate, since the kit ships no grader |
@@ -93,18 +96,20 @@ The kit ships no local grader for this competition, so `tools/verify-gate.ts` re
 rules name and runs them on what `main.ts` wrote. Its last run:
 
 ```
-pass  dashboard_files  3 files, 49711 bytes, no network address
+pass  dashboard_files  3 files, 50712 bytes, no network address
 pass  board_file       198 rows, every slug in the snapshot
 pass  sorted_by_value  ranks 1..N, values never rise
 pass  farm_steps       every row 3 to 12 steps of 20 to 600 characters
 pass  coverage         all 40 watchlist slugs ranked
 pass  screenshots      3 images, 1-board.png, 2-detail.png, 3-filtered.png
-pass  dossier_matches  1346176 bytes, byte for byte what buildDossier writes
+pass  dossier_matches  1348598 bytes, byte for byte what buildDossier writes
 7 passed, 0 failed
 ```
 
 Two independent runs into two fresh directories compare identical (`diff -r` over `board.json`, `data.js`,
-`dossier.json`, `dashboard/` and `screenshots/`), and the dossier is 1.28 MiB against the 1.5 MiB cap.
+`dossier.json`,  `dashboard/` and `screenshots/`), and the dossier is 1.29 MiB against the 1.5 MiB cap. The
+kit's own `makefun check` passes `competition_open`, `snapshot` (15 files, 1,100,063 bytes), `license_osi`
+(SPDX-License-Identifier: MIT) and `entrypoint` (main.ts, node22); the transcript rows are the submission's.
 
 ---
 

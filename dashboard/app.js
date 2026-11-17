@@ -82,6 +82,7 @@
     sort: params.get('sort') || 'implied',
     dir: params.get('dir') || 'desc',
     watchOnly: params.get('tier') === 'watchlist',
+    beyondOnly: params.get('tier') === 'beyond',
     open: {},
     slug: params.get('slug') || null
   };
@@ -200,6 +201,9 @@
       append(box, el('label', { class: 'check' },
         el('input', { type: 'checkbox', checked: state.watchOnly ? 'checked' : null, onchange: function (e) { state.watchOnly = e.target.checked; renderView(); } }),
         'the ' + R.watchlist_size + ' on the house watchlist only'));
+      append(box, el('label', { class: 'check' },
+        el('input', { type: 'checkbox', checked: state.beyondOnly ? 'checked' : null, onchange: function (e) { state.beyondOnly = e.target.checked; renderView(); } }),
+        'the radar\'s own finds above the floor (' + R.rows.filter(function (r) { return r.beyond_floor; }).length + ')'));
     }
     append(box, el('div', { class: 'spacer' }));
     append(box, el('div', { class: 'count', id: 'count' }));
@@ -209,6 +213,7 @@
   function filtered() {
     var out = R.rows.filter(function (r) {
       if (state.watchOnly && !r.on_watchlist) return false;
+      if (state.beyondOnly && !r.beyond_floor) return false;
       if (state.category !== 'all' && (r.category === null ? 'Uncategorized' : r.category) !== state.category) return false;
       if (state.chain !== 'all' && r.chains.indexOf(state.chain) < 0) return false;
       if (state.q) {
@@ -280,7 +285,8 @@
         el('td', { class: 'rank' }, el('b', { text: String(r.rank) })),
         el('td', { class: 'name' },
           el('b', { text: r.name }), r.on_watchlist ? el('span', { class: 'pill wl', text: 'watchlist' }) : null,
-          r.ev_rank <= 5 ? el('span', { class: 'pill ev', text: 'best farm #' + r.ev_rank }) : null,
+          r.beyond_floor ? el('span', { class: 'pill ev', text: 'beyond the floor' }) : null,
+          r.ev_rank <= 5 ? el('span', { class: 'pill', text: 'best farm #' + r.ev_rank }) : null,
           el('div', { class: 'slug', text: r.slug }),
           el('div', { class: 'chains', text: r.chains.slice(0, 4).join(' · ') + (r.chains.length > 4 ? ' +' + (r.chains.length - 4) : '') })),
         el('td', { class: 'mut', text: (r.category || '—') + (r.age_days === null ? '' : ' · ' + age(r.age_days)) }),
@@ -297,8 +303,10 @@
     var view = el('div', { class: 'view' }, table,
       el('div', { class: 'legend', html:
         'Sorted by <b>' + state.sort + '</b> ' + (state.dir === 'asc' ? 'ascending' : 'descending') +
-        '; the # column keeps each row\'s rank by <b>implied value</b>, which is a different order. Click a row for its farm plan and ' +
-        'the arithmetic behind its value. <b>implied value</b> is this board\'s own claim, from the snapshot\'s figures and no other ' +
+        '; the # column keeps each row\'s rank by <b>implied value</b>, which is a different order. The ' +
+        R.rows.filter(function (r) { return r.beyond_floor; }).length + ' rows marked <b>beyond the floor</b> are above the house\'s own ' +
+        'floor of ' + usd(R.floor_usd) + ' but not on its watchlist: the radar\'s own finds, which the list is a floor under and never a ceiling over. ' +
+        'Click a row for its farm plan and the arithmetic behind its value. <b>implied value</b> is this board\'s own claim, from the snapshot\'s figures and no other ' +
         'source; <b>likely range</b> is the middle half of the model\'s cross-validated error, so roughly one row in four falls outside it. ' +
         '<b>farm</b> is one wallet of ' + usd(R.farm_assumption.budget_usd) + ' held ' + R.farm_assumption.days_held +
         ' days against a ' + R.farm_assumption.campaign_days + '-day campaign worth ' +
@@ -504,7 +512,9 @@
     var count = document.getElementById('count');
     if (count) {
       count.textContent = state.tab === 'board'
-        ? (state.watchOnly ? R.watchlist_size + ' on the watchlist (all of them)' : filtered().length + ' of ' + R.rows.length + ' rows shown')
+        ? (state.watchOnly ? R.watchlist_size + ' on the watchlist (all of them)'
+          : state.beyondOnly ? filtered().length + ' of the ' + R.rows.filter(function (r) { return r.beyond_floor; }).length + ' beyond the floor'
+          : filtered().length + ' of ' + R.rows.length + ' rows shown')
         : state.tab === 'screened' ? R.screened.length + ' records' : state.tab === 'live' ? R.live.length + ' protocols' : '';
     }
   }

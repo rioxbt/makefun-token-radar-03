@@ -57,6 +57,8 @@ export interface RadarRow {
   change_7d: number | null;
   age_days: number | null;
   on_watchlist: boolean;
+  /** Above the house's own floor but not on its watchlist: a launch the floor never named. */
+  beyond_floor: boolean;
   implied_value_usd: number;
   band_lo_usd: number;
   band_hi_usd: number;
@@ -656,6 +658,7 @@ export function buildRadar(snapshot: Snapshot): Radar {
     const row: Omit<RadarRow, 'rank' | 'ev_rank'> = {
       slug: p.slug, name: p.name, category: p.category, chains: p.chains, tvl_usd: p.tvl_usd,
       change_7d: p.change_7d, age_days: age, on_watchlist: watch.has(p.slug),
+      beyond_floor: !watch.has(p.slug) && p.tvl_usd >= snapshot.floor_usd,
       implied_value_usd: implied,
       band_lo_usd: Math.max(1, Math.round(implied * 10 ** calibration.cv.band_lo)),
       band_hi_usd: Math.max(2, Math.round(implied * 10 ** calibration.cv.band_hi)),
